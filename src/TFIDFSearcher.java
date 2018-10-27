@@ -70,10 +70,10 @@ public class TFIDFSearcher extends Searcher
 				double weight = tf(termDocumentFreq.get(term).get(docId)) * idf(documents.size(),termDocumentFreq.get(term).size());
 				termDocumentWeight.get(term).put(docId, weight);
 				if(docsNorm.containsKey(docId)){
-					docsNorm.put(docId, docsNorm.get(docId)+weight);
+					docsNorm.put(docId, docsNorm.get(docId) + weight * weight);
 				}
 				else{
-					docsNorm.put(docId, weight);
+					docsNorm.put(docId, weight * weight);
 				}
 			}
 		}
@@ -98,7 +98,7 @@ public class TFIDFSearcher extends Searcher
 	}
 	
 	private double idf(int n, int df){
-		return Math.log10(n/df);
+		return Math.log10(1+ (n/df));
 	}
 	
 	@Override
@@ -136,7 +136,7 @@ public class TFIDFSearcher extends Searcher
 		List<String> queryTokens = tokenize(queryString);
 		
 		//now we change the query into the tfidf weight
-		Map<String, Double> queryWeight = new TreeMap<String, Double>();
+		/*Map<String, Double> queryWeight = new TreeMap<String, Double>();
 		for(String token:queryTokens){
 			if(queryWeight.containsKey(token)){
 				queryWeight.put(token, queryWeight.get(token)+idf(documents.size(),termDocumentWeight.get(token).size()));
@@ -144,6 +144,23 @@ public class TFIDFSearcher extends Searcher
 			else{
 				queryWeight.put(token, idf(documents.size(),termDocumentWeight.get(token).size()));
 			}
+		}*/
+		//Map it to make term frequency
+		Map<String, Integer> queryTermFreq = new TreeMap<String, Integer>();
+		for(String token:queryTokens){
+			if(queryTermFreq.containsKey(token)){
+				queryTermFreq.put(token, queryTermFreq.get(token)+1);
+			}
+			else{
+				queryTermFreq.put(token, 1);
+			}
+		}
+		
+		//make those frequency into weight
+		Map<String, Double> queryWeight = new TreeMap<String, Double>();
+		for(String token:queryTermFreq.keySet()){
+			double weight = tf(queryTermFreq.get(token)) * idf(documents.size(),termDocumentWeight.get(token).size());
+			queryWeight.put(token, weight);
 		}
 		
 		//fun time
