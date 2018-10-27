@@ -45,12 +45,12 @@ public class TFIDFSearcher extends Searcher
 						termDocumentFreq.get(token).put(doc.getId(), termDocumentFreq.get(token).get(doc.getId())+1);
 					}
 					else{
-						//if the term is new for this document
+						//if the term is new only for this document
 						termDocumentFreq.get(token).put(doc.getId(), 1);
 					}
 				}
 				else{
-					//new term
+					//very new term
 					termDocumentFreq.put(token, new TreeMap<Integer,Integer>());
 					//well it is new so
 					termDocumentFreq.get(token).put(doc.getId(), 1);
@@ -60,7 +60,7 @@ public class TFIDFSearcher extends Searcher
 				}
 			}
 		}
-		//we suppose to get all TF and DF for now
+		//we supposed to get all TF and DF for now
 		
 		//time to calculate for TF-IDF weight
 		
@@ -98,7 +98,7 @@ public class TFIDFSearcher extends Searcher
 	}
 	
 	private double idf(int n, int df){
-		return Math.log10(1+ (n/df));
+		return Math.log10(1+ (((double)n)/((double)df)));
 	}
 	
 	@Override
@@ -127,7 +127,6 @@ public class TFIDFSearcher extends Searcher
 		 * Document document	: the reference to 'that document'
 		 * double 	score		: score for each result
 		 */
-		//LET'SSSSSSSSSSSS GET RIGHTTTTTTTT INTO THE NEWSSSSSSSSSSSSSSSSS
 		
 		//prepare result list
 		List<SearchResult> results = new ArrayList<SearchResult>();
@@ -169,8 +168,8 @@ public class TFIDFSearcher extends Searcher
 		//just calculate norm of query for efficientcy
 		//of course, we don't write efficient code everywhere so we do what we could
 		double queryNorm = 0.0;
-		for(Double weight:queryWeight.values()){
-			queryNorm += weight*weight;
+		for(String token:queryWeight.keySet()){
+			queryNorm += queryWeight.get(token)*queryWeight.get(token);
 		}
 		queryNorm = Math.sqrt(queryNorm);
 		
