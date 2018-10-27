@@ -1,6 +1,6 @@
-//Name: 
-//Section: 
-//ID: 
+//Name: Poomdharm Benjasirimongkol
+//Section: 1
+//ID: 5988056
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +72,32 @@ public class SearcherEvaluator {
 	public double[] getQueryPRF(Document query, Searcher searcher, int k)
 	{
 		/*********************** YOUR CODE HERE *************************/
-		return null;
+		//So we need to create a list and set of Ground truth and relevant set first
+		List<SearchResult> RelevantDocs = searcher.search(query.getRawText(), k);
+		Set<Integer> Gq = answers.get(query.getId());		//get set of relevant docs
+		Set<Integer> Rq = new HashSet<Integer>();			//get k searcher results
+		Set<Integer> IntersectRG = new HashSet<Integer>();	//a temp HashSet for intersection
+		double Precision = 0.0, Recall = 0.0, F1 = 0.0;
+		
+		//Create Rq set
+		for(SearchResult SR: RelevantDocs) {
+			Rq.add(SR.getDocument().getId());
+		}
+		
+		//Intersection
+		IntersectRG = Rq;
+		IntersectRG.retainAll(Gq);
+		
+		//Find Precision
+		Precision = IntersectRG.size()/Rq.size();
+		//Find Recall
+		Recall = IntersectRG.size()/Gq.size();
+		//Find F1
+		if(Precision + Recall != 0) {						//prevent case of 0 divider
+			F1 = (2*Precision*Recall) / (Precision + Recall);
+		}
+		double[] Result = {Precision, Recall, F1};			//Pack and return the Precision, Recall, F1 into result array
+		return Result;
 		/****************************************************************/
 	}
 	
@@ -86,7 +111,47 @@ public class SearcherEvaluator {
 	public double[] getAveragePRF(Searcher searcher, int k)
 	{
 		/*********************** YOUR CODE HERE *************************/
-		return null;
+		//method for compute the average of Precision Recall and F1
+		//Just like the last method except we do it in every docs
+		double totPrecision = 0.0, totRecall = 0.0, totF1 = 0.0;
+		double avgPrecision = 0.0, avgRecall = 0.0, avgF1 = 0.0;
+		
+		for(Document q: queries) {
+			List<SearchResult> RelevantDocs = searcher.search(q.getRawText(), k);
+			Set<Integer> Gq = answers.get(q.getId());		//get set of relevant docs
+			Set<Integer> Rq = new HashSet<Integer>();			//get k searcher results
+			Set<Integer> IntersectRG = new HashSet<Integer>();	//a temp HashSet for intersection
+			double Precision = 0.0, Recall = 0.0, F1 = 0.0;
+			
+			//Create Rq set
+			for(SearchResult SR: RelevantDocs) {
+				Rq.add(SR.getDocument().getId());
+			}
+			
+			//Intersection
+			IntersectRG = Rq;
+			IntersectRG.retainAll(Gq);
+			
+			//Find Precision
+			Precision = IntersectRG.size()/Rq.size();
+			//Find Recall
+			Recall = IntersectRG.size()/Gq.size();
+			//Find F1
+			if(Precision + Recall != 0) {						//prevent case of 0 divider
+				F1 = (2*Precision*Recall) / (Precision + Recall);
+			}
+			//Sum up all Precision Recall and F1
+			totPrecision +=  Precision;
+			totRecall += Recall;
+			totF1 += F1;
+		}
+		//Calculate the average of Precision Recall and F1
+		avgPrecision = totPrecision/queries.size();
+		avgRecall = totRecall/queries.size();
+		avgF1 = totF1/queries.size();
+		
+		double[] Result = {avgPrecision, avgRecall, avgF1};		//Pack and return the updated average Precision, Recall, F1 into result array
+		return Result;
 		/****************************************************************/
 	}
 }
