@@ -10,26 +10,22 @@ import java.util.List;
 import java.util.Vector;
 
 public class JaccardSearcher extends Searcher{
+	
+	
 
 	public JaccardSearcher(String docFilename) {
-		super(docFilename);
-		/************* YOUR CODE HERE ******************/
-		
-		
-		
-		
-		/***********************************************/
-		
+		super(docFilename);		
 	}
 
 	@Override
 	public List<SearchResult> search(String queryString, int k) {
 		
-		List<String> queryTokens = this.tokenize(queryString);
+		List<String> queryTokens = Searcher.tokenize(queryString);
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 		List<SearchResult> topKresult = new ArrayList<SearchResult>();
 		
 		//Part 1: Create the search result for all documents first//
+		
 		if(queryTokens.size() == 0) {			//Case where query is empty;
 			for(Document doc: documents) {
 				SearchResult jaccardZero = new SearchResult(doc, 0.0);
