@@ -52,10 +52,10 @@ public class TFIDFSearcher extends Searcher
 				else{
 					//very new term
 					termDocumentFreq.put(token, new TreeMap<Integer,Integer>());
-					//well it is new so
+					//well it is new
 					termDocumentFreq.get(token).put(doc.getId(), 1);
 					//also we can just instantiate for the weight
-					//just leave the docid and weight value as null becuase reasons
+					//just leave the docid and weight value as null
 					termDocumentWeight.put(token, new TreeMap<Integer,Double>());
 				}
 			}
@@ -66,7 +66,6 @@ public class TFIDFSearcher extends Searcher
 		
 		for(String term:termDocumentFreq.keySet()){
 			for(Integer docId:termDocumentFreq.get(term).keySet()){
-				//well it is more likely that there would not be any disturbing variable yes?
 				double weight = tf(termDocumentFreq.get(term).get(docId)) * idf(documents.size(),termDocumentFreq.get(term).size());
 				termDocumentWeight.get(term).put(docId, weight);
 				if(docsNorm.containsKey(docId)){
@@ -82,8 +81,7 @@ public class TFIDFSearcher extends Searcher
 			docsNorm.put(docId, Math.sqrt(docsNorm.get(docId)));
 		}
 		
-		//ok if I didn't fuck anything up then we should already have weight-calculated matrix
-		//in case that we want to free some memory the uncomment these lines
+		//in case that we want to free some memory then uncomment these lines
 		//termDocumentFreq.clear();
 		//System.gc();
 		long endTime = System.currentTimeMillis();
@@ -104,9 +102,7 @@ public class TFIDFSearcher extends Searcher
 	@Override
 	public List<SearchResult> search(String queryString, int k) {
 		/************* YOUR CODE HERE ******************/
-		/* well I was so lazy to use multiple line comment before but whatever
-		 * comment consistency is not really need to be consider for good programming practice right?(jk)
-		 * 
+		/* 
 		 * @@@param
 		 * String 	queryString	: string of the query, will needed to be tokenized before using
 		 * int		k			: number of results needed to be returned, must be descending sorted based of relevence
@@ -135,15 +131,6 @@ public class TFIDFSearcher extends Searcher
 		List<String> queryTokens = tokenize(queryString);
 		
 		//now we change the query into the tfidf weight
-		/*Map<String, Double> queryWeight = new TreeMap<String, Double>();
-		for(String token:queryTokens){
-			if(queryWeight.containsKey(token)){
-				queryWeight.put(token, queryWeight.get(token)+idf(documents.size(),termDocumentWeight.get(token).size()));
-			}
-			else{
-				queryWeight.put(token, idf(documents.size(),termDocumentWeight.get(token).size()));
-			}
-		}*/
 		//Map it to make term frequency
 		Map<String, Integer> queryTermFreq = new TreeMap<String, Integer>();
 		for(String token:queryTokens){
@@ -165,11 +152,9 @@ public class TFIDFSearcher extends Searcher
 			queryWeight.put(token, weight);
 		}
 		
-		//fun time
-		//inner product of hell
+		//inner product
 		
-		//just calculate norm of query for efficientcy
-		//of course, we don't write efficient code everywhere so we do what we could
+		//calculate norm of query for efficientcy
 		double queryNorm = 0.0;
 		for(String token:queryWeight.keySet()){
 			queryNorm += queryWeight.get(token)*queryWeight.get(token);
