@@ -87,7 +87,7 @@ public class SearcherEvaluator {
 		}
 		
 		//Intersection
-		IntersectRG = Rq;
+		IntersectRG.addAll(Rq);
 		IntersectRG.retainAll(Gq);
 		
 		//Find Precision
@@ -131,11 +131,11 @@ public class SearcherEvaluator {
 			}
 			
 			//Intersection
-			IntersectRG = Rq;
+			IntersectRG.addAll(Rq);
 			IntersectRG.retainAll(Gq);
 			
 			//Find Precision
-			Precision = (double) IntersectRG.size()/(double) Rq.size();
+			Precision = (double) IntersectRG.size()/ (double) Rq.size();
 			//Find Recall
 			Recall = (double) IntersectRG.size()/(double) Gq.size();
 			//Find F1
@@ -143,14 +143,14 @@ public class SearcherEvaluator {
 				F1 = (2*Precision*Recall) / (Precision + Recall);
 			}
 			//Sum up all Precision Recall and F1
-			totPrecision +=  Precision;
+			totPrecision += Precision;
 			totRecall += Recall;
 			totF1 += F1;
 		}
 		//Calculate the average of Precision Recall and F1
-		avgPrecision = totPrecision/queries.size();
-		avgRecall = totRecall/queries.size();
-		avgF1 = totF1/queries.size();
+		avgPrecision = totPrecision/(double)queries.size();
+		avgRecall = totRecall/(double)queries.size();
+		avgF1 = totF1/(double)queries.size();
 		
 		double[] Result = {avgPrecision, avgRecall, avgF1};		//Pack and return the updated average Precision, Recall, F1 into result array
 		return Result;
