@@ -158,6 +158,9 @@ public class TFIDFSearcher extends Searcher
 		//make those frequency into weight
 		Map<String, Double> queryWeight = new TreeMap<String, Double>();
 		for(String token:queryTermFreq.keySet()){
+			if(!termDocumentWeight.containsKey(token)){
+				continue;
+			}
 			double weight = tf(queryTermFreq.get(token)) * idf(documents.size(),termDocumentWeight.get(token).size());
 			queryWeight.put(token, weight);
 		}
