@@ -74,6 +74,8 @@ public class SearcherEvaluator {
 		/*********************** YOUR CODE HERE *************************/
 		//So we need to create a list and set of Ground truth and relevant set first
 		List<SearchResult> RelevantDocs = searcher.search(query.getRawText(), k);
+		
+		
 		Set<Integer> Gq = answers.get(query.getId());		//get set of relevant docs
 		Set<Integer> Rq = new HashSet<Integer>();			//get k searcher results
 		Set<Integer> IntersectRG = new HashSet<Integer>();	//a temp HashSet for intersection
@@ -89,9 +91,9 @@ public class SearcherEvaluator {
 		IntersectRG.retainAll(Gq);
 		
 		//Find Precision
-		Precision = IntersectRG.size()/Rq.size();
+		Precision = (double) IntersectRG.size()/(double) Rq.size();
 		//Find Recall
-		Recall = IntersectRG.size()/Gq.size();
+		Recall = (double) IntersectRG.size()/(double) Gq.size();
 		//Find F1
 		if(Precision + Recall != 0) {						//prevent case of 0 divider
 			F1 = (2*Precision*Recall) / (Precision + Recall);
@@ -133,9 +135,9 @@ public class SearcherEvaluator {
 			IntersectRG.retainAll(Gq);
 			
 			//Find Precision
-			Precision = IntersectRG.size()/Rq.size();
+			Precision = (double) IntersectRG.size()/(double) Rq.size();
 			//Find Recall
-			Recall = IntersectRG.size()/Gq.size();
+			Recall = (double) IntersectRG.size()/(double) Gq.size();
 			//Find F1
 			if(Precision + Recall != 0) {						//prevent case of 0 divider
 				F1 = (2*Precision*Recall) / (Precision + Recall);
