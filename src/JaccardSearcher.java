@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 public class JaccardSearcher extends Searcher{
@@ -21,6 +23,7 @@ public class JaccardSearcher extends Searcher{
 	public List<SearchResult> search(String queryString, int k) {
 		
 		List<String> queryTokens = Searcher.tokenize(queryString);
+		Set<String> queryTokensSet = new HashSet<String>(queryTokens);
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 		List<SearchResult> topKresult = new ArrayList<SearchResult>();
 		
@@ -39,7 +42,12 @@ public class JaccardSearcher extends Searcher{
 					SearchResult jaccardZero = new SearchResult(doc, 0.0);
 					searchResults.add(jaccardZero);
 				} else {							//Normal case
-					int intersection = 0;
+					Set<String> documentTokensSet = new HashSet<String>(doc.getTokens());
+					//we suppose to get a copy of docToken which has been put into set aka. no dup
+					//so we can ultilize data inside it all we want
+					//try not to alter the data in queryTokensSet because we only create it once per query
+					
+					/*int intersection = 0;
 					int union = queryTokens.size() + doc.getTokens().size();
 					
 					for(String queryTerm: queryTokens) {
@@ -49,9 +57,22 @@ public class JaccardSearcher extends Searcher{
 							union--;				//Decrease the size of union by 1 for every intersecting pair
 						}
 						
-					}
+					}*/
 					
-					SearchResult jaccardScore = new SearchResult(doc, intersection/union);
+					//union
+					documentTokensSet.addAll(queryTokensSet);
+					int union = documentTokensSet.size();
+					int intersection;
+					SearchResult jaccardScore;
+					if(union == 0){
+						jaccardScore = new SearchResult(doc, 0.0);
+					}else{
+						//intersect
+						documentTokensSet = new HashSet<String>(doc.getTokens());
+						documentTokensSet.retainAll(queryTokensSet);
+						intersection = documentTokensSet.size();
+						jaccardScore = new SearchResult(doc, ((double)intersection)/ ((double)union));
+					}
 					searchResults.add(jaccardScore);
 				}
 								
